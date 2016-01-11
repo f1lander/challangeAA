@@ -1,9 +1,12 @@
 {
- "name": "ar-api",
- "version": "2.0.0",
- "dependencies": {
- "express": "^4.7.1",
- "method-override": "^2.1.2",
- "body-parser": "^1.5.1"
- }
+  "name": "ar-api",
+  "version": "2.0.0",
+  "dependencies": {
+    "body-parser": "^1.5.1",
+    "express": "^4.7.1",
+    "method-override": "^2.1.2",
+    "node-sort": "^0.2.0",
+    "request": "^2.67.0",
+    "word-list-json": "^0.2.0"
+  }
 }
