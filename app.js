@@ -176,13 +176,10 @@ var consonant = function (wordsArray) {
                  continue;        
             }
             
-            if(!vowelCheck(wordsArray[i][j]).isV){
-                 console.log(wordsArray[i][j]);
-                 var leta = isCap ? wordsArray[i][j].toUpperCase() : wordsArray[i][j].toLowerCase();    
-                 console.log(leta);       
+            if(!vowelCheck(wordsArray[i][j]).isV){                
+                 var leta = isCap ? wordsArray[i][j].toUpperCase() : wordsArray[i][j].toLowerCase();                      
                  wordsArray[i] = wordsArray[i].replace(wordsArray[i][j], leta); 
-                 isCap = !isCap;
-                 console.log(wordsArray[i][j]);
+                 isCap = !isCap;               
             }                          
            
         }
@@ -194,47 +191,35 @@ var consonant = function (wordsArray) {
 var replaceFibonnacci = function (wordsArray, _sfn) {
     var sfn = _sfn;
     
-    var bsfn = function(sfn_) {    
+    var bsfn = 0;
         var f0 = 0;
         var f1 = 1;
         var fn = 0;   
-        while(sfn_ != fn){
+        while(_sfn!= fn){
             fn = f0 + f1;
             f0 = f1;
-            f1 = fn;
-         
+            f1 = fn;         
         };       
-        return f0;
-    };
+       bsfn = f0;
+    
   
     var length = wordsArray.length
     for (var i = 0; i < length; i++) {
         for (var j = 0; j < wordsArray[i].length; j++) {   
             if(vowelCheck(wordsArray[i][j]).isV){
-                 console.log(wordsArray[i][j]);
+                // console.log(wordsArray[i][j]);
       
                  wordsArray[i] = wordsArray[i].replace(wordsArray[i][j], sfn);
                  var tempBsfn = sfn; 
                  sfn = bsfn + sfn;
                  bsfn = tempBsfn;
-                 console.log(wordsArray[i][j]);
+               //  console.log(wordsArray[i][j]);
             }                          
            
         }
     }
-}
-
-
-/*[ 'CoLuMn',
-     'InSuRaNcE',
-     'ThIsIsHaRd',
-     'DrOwN',
-     'gLeDsY',
-     'fRiGhTeNiNg',
-     'gOoHeE',
-     'sHoTgUn',
-     'gLeDsY',
-     'gUm' ] */
+    return wordsArray;
+};
 /* All FUNCTIONS FOR ALGORITHMS ************************************* */
 var listByGuid = [];
 var interval = 1;
@@ -251,7 +236,7 @@ var main = function() {
                         ironMan(res.words, guid);
                         break;
                     case 'thor':
-                        thor(res.words,guid);
+                        thor(res.words,guid, res.startingFibonacciNumber);
                         break;
                     case 'theincrediblehulk':
                         hulk(res.words, guid);
@@ -268,8 +253,9 @@ var main = function() {
     /*if(interval >= 20){clearInterval(intervalObject); return;}; 
     interval++;*/  
 };
-//main();
-console.log(replaceFibonnacci(233));
+//Call the main method to start the app
+main();
+//console.log(replaceFibonnacci(['dog', 'cat','bird'], 5));
 //consonant(['DoG', 'CaT','BiRd']);
 //var intervalObject = setInterval(main,10000);
 
@@ -288,15 +274,16 @@ var ironMan = function(arrayWords, guid) {
     console.log(base64Encode(ascII));
 };
 //Thor Algortihm
-var thor = function (arrayWords, guid) {
+var thor = function (arrayWords, guid, sfn) {
     
     searchWords(arrayWords, guid);
     //Step 2
     var alphabetized = orderArray(arrayWords, -1);
+    console.log(alphabetized);
     //Step 3
     consonant(alphabetized);
     //Step 4
-    
+    console.log(replaceFibonnacci(arrayWords, sfn))
     //Step 5
     var concat = concatAsterik(arrayWords);
     console.log(concat);
