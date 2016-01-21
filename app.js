@@ -3,20 +3,19 @@ var pichetio = require("request"),
         _ = require('underscore'),
         baseUrl = 'http://internal-devchallenge-2-dev.apphb.com/'
 
-var guid = uuid.v1();
-
 var wordlist = require('./words.json');
 var optionsGET = {
   url: baseUrl + 'values/',
   headers: {
-    'Accept': 'appliication/json'
+    'Accept': 'application/json'
   }
 };
+
 
 var optionsPOST = {
   url: baseUrl + 'values/',
   headers: {
-    'Accept': 'appliication/json'
+    'Accept': 'application/json'
   }
 };
 
@@ -184,7 +183,7 @@ var consonant = function (wordsArray) {
            
         }
     }
-    
+    return wordsArray;
 }
 
 //REplace vowels with fibonnaci numbers order
@@ -223,58 +222,109 @@ var replaceFibonnacci = function (wordsArray, _sfn) {
 /* All FUNCTIONS FOR ALGORITHMS ************************************* */
 var listByGuid = [];
 var interval = 1;
+var postit = function (guid, algorithm, encoded) {
+     
+   pichetio.post({
+            url: baseUrl + 'values/' + guid +'/'+algorithm,
+            formData:{
+            encodedValue:encoded,
+            emailAddress:"filanderucles@hotmail.com",
+            name:"Edax",
+            webhookUrl:"https://protected-savannah-1372.herokuapp.com/api/tablitas",
+            repoUrl:"https://github.com/f1lander/challangeAA"
+  },
+  headers: {
+    'Accept': 'application/json'
+  }}, function(error, response, body){
+       var res = JSON.parse(body);    
+        console.log(res);
+        });
+};
+
+var getGuid = function (xguid, algorithm, encoded) {
+     
+pichetio.get({
+  url: baseUrl + 'encoded/' + xguid +'/'+algorithm,
+  headers: {
+    'Accept': 'application/json'
+  }}, function(error, response, body){
+        var res = JSON.parse(body);              
+           console.log("Wooooooooooooooooooooooooooooo " + res.encoded + "===" + encoded);
+             postit(xguid, algorithm, res.encoded);            
+        });
+}
 
 var main = function() {
-    optionsGET.url += guid;
-        pichetio.get(optionsGET, function(error, response, body){
+    var _guid = uuid.v1();
+        pichetio.get({
+  url: baseUrl + 'values/' + _guid,
+  headers: {
+    'Accept': 'application/json'
+  }}, function(error, response, body){
             if (!error && response.statusCode == 200) {
-                var res = JSON.parse(body);
-                listByGuid.push({guid: guid, words: res.words}); 
+                var res = JSON.parse(body);                
+            //     for (var index = 0; index < listByGuid.length; index++) {
+            //         var ii = _.difference(listByGuid[index].words, res.words);
+            //         if(ii.length == 0 && listByGuid[index].usedGUid < 1 ){
+            //             console.log('Encontrado');
+            //             guid = listByGuid[index].guid;
+            //         }                                             
+            //     }                
+            //    
+               // listByGuid.push({guid: guid, words: res.words, usedGuid: 0}); 
                 console.log(res);
                 switch(res.algorithm.toLowerCase()) {
                     case 'ironman':
-                        ironMan(res.words, guid);
+                        ironMan(res.words, _guid, res.algorithm);
                         break;
                     case 'thor':
-                        thor(res.words,guid, res.startingFibonacciNumber);
+                        thor(res.words,_guid, res.startingFibonacciNumber, res.algorithm);
                         break;
                     case 'theincrediblehulk':
-                        hulk(res.words, guid);
+                        hulk(res.words, _guid, res.algorithm);
                         break;
                     default: //default is for elCapi
-                        elCapi(res.words, guid);
+                        elCapi(res.words, _guid, res.algorithm);
                         break;
                 }
+              
+               
             //hulk(res.words, guid);
                 
             }
         });
     
-    /*if(interval >= 20){clearInterval(intervalObject); return;}; 
-    interval++;*/  
+    //if(interval >= 20){clearInterval(intervalObject); return;}; 
+    //interval++;  
 };
+
+
 //Call the main method to start the app
 main();
 //console.log(replaceFibonnacci(['dog', 'cat','bird'], 5));
 //consonant(['DoG', 'CaT','BiRd']);
-//var intervalObject = setInterval(main,10000);
+//var intervalObject = setInterval(main,15000);
+// 
 
 //Iron Man Algortihm
-var ironMan = function(arrayWords, guid) {
+var ironMan = function(arrayWords, guid, algorithmName) {
  
- var originalArray = arrayWords.slice(); 
+    var originalArray = arrayWords.slice(); 
     //Step 1
-    console.log(orderArray(arrayWords, -1));
+    var a = orderArray(arrayWords, -1);
     //Step 2 move letters
-    console.log(moveVowels(arrayWords));
+    console.log(moveVowels(a));
     //Step 3
     var ascII = asciiCode(originalArray);
     console.log(ascII);
     //Step 4 Base64 encoded
-    console.log(base64Encode(ascII));
+    var encoded = base64Encode(ascII)
+    console.log(encoded);
+    
+    getGuid(guid, algorithmName, encoded );
 };
 //Thor Algortihm
-var thor = function (arrayWords, guid, sfn) {
+var thor = function (arrayWords, guid, sfn, algorithmName) {
     
     searchWords(arrayWords, guid);
     //Step 2
@@ -288,11 +338,13 @@ var thor = function (arrayWords, guid, sfn) {
     var concat = concatAsterik(arrayWords);
     console.log(concat);
     //Step 6 Base64 encoded
-    console.log(base64Encode(concat));
+     var encoded = base64Encode(concat)
+    console.log(encoded);
+    getGuid(guid, algorithmName, encoded );
     
 };
 //The Incredible Hulk Algortihm
-var hulk = function(arrayWords, guid) {
+var hulk = function(arrayWords, guid, algorithmName) {
     
  var originalArray = arrayWords.slice();
  
@@ -305,11 +357,13 @@ var hulk = function(arrayWords, guid) {
     var concat = concatAsterik(originalArray);
     console.log(concat);
     //Step 4 Base64 encoded
-    console.log(base64Encode(concat));
+       var encoded = base64Encode(concat)
+    console.log(encoded);
+    getGuid(guid, algorithmName, encoded );
     
 };
 //Captain America Algortihm
-var elCapi = function(arrayWords, guid) {
+var elCapi = function(arrayWords, guid, algorithmName) {
     //Step1
     console.log(moveVowels(arrayWords));
     //Step2
@@ -317,5 +371,80 @@ var elCapi = function(arrayWords, guid) {
     //Step4
     console.log(asciiCode(arrayWords));
     //Step 5
-    console.log(base64Encode(arrayWords));
+    var ascII = asciiCode(arrayWords);
+    console.log(ascII);
+    var encoded = base64Encode(ascII)
+    console.log(encoded);
+    getGuid(guid, algorithmName, encoded );
 };
+
+// //Iron Man Algortihm
+// var ironMan = function(arrayWords, guid, algorithmName) {
+//  
+//  //var originalArray = arrayWords.slice(); 
+//     //Step 1
+//     var a = orderArray(arrayWords, -1);
+//     //Step 2 move letters
+//     var b = moveVowels(a);
+//     //Step 3
+//     var ascII = asciiCode(b);
+//     console.log(ascII);
+//     //Step 4 Base64 encoded
+//     var encoded = base64Encode(ascII)
+//     console.log(encoded);
+//     
+//     getGuid(guid, algorithmName, encoded );
+// };
+// //Thor Algortihm
+// var thor = function (arrayWords, guid, sfn, algorithmName) {
+//     
+//     var a = searchWords(arrayWords, guid);
+//     //Step 2
+//     var alphabetized = orderArray(a, -1);
+//     console.log(alphabetized);
+//     //Step 3
+//     var b = consonant(alphabetized);
+//     //Step 4
+//    var c =replaceFibonnacci(b, sfn);
+//     //Step 5
+//     var concat = concatAsterik(c);
+//     console.log(concat);
+//     //Step 6 Base64 encoded
+//      var encoded = base64Encode(concat)
+//     console.log(encoded);
+//    getGuid(guid, algorithmName, encoded );
+//     
+// };
+// //The Incredible Hulk Algortihm
+// var hulk = function(arrayWords, guid, algorithmName) {
+//     
+//  //var originalArray = arrayWords.slice();
+//      
+//     //Step 1
+//     var a = moveVowels(arrayWords);
+//     //Step 2 move letters this sort is not reverse so we send -1 for reverse and -1 for normal order
+//     var b = orderArray(a, -1);
+//     //Step 3
+//     var concat = concatAsterik(b);
+//     console.log(concat);
+//     //Step 4 Base64 encoded
+//     var encoded = base64Encode(concat)
+//     console.log(encoded);
+//     getGuid(guid, algorithmName, encoded );
+//     
+// };
+// //Captain America Algortihm
+// var elCapi = function(arrayWords, guid, algorithmName) {
+//     //Step1
+//     var a = moveVowels(arrayWords);
+//     //Step2
+//     var b = orderArray(a, 1);
+//     //Step4
+//     var c = asciiCode(b);
+//     //Step 5
+//     var ascII = asciiCode(c);
+//     console.log(ascII);
+//     var encoded = base64Encode(ascII)
+//     console.log(encoded);
+//   getGuid(guid, algorithmName, encoded );
+// };
