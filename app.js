@@ -1,27 +1,33 @@
 var pichetio = require("request"),
         uuid = require('node-uuid'),                      
         _ = require('underscore'),
-       // base64 = require('base-64'),
+       // base64 = require('base-64'),baseUrl + 'values/' + _guid +'/'+res.algorithm
+        async = require('async'),
         baseUrl = 'http://internal-devchallenge-2-dev.apphb.com/'
 
 String.prototype.replaceAt=function(index, character) {
     return this.substr(0, index) + character + this.substr(index+character.length);
 }
 var wordlist = require('./words.json');
-var optionsGET = {
-  url: baseUrl + 'values/',
-  headers: {
-    'Accept': 'application/json'
-  }
-};
 
+var encodedValues = [];
 
-var optionsPOST = {
-  url: baseUrl + 'values/',
-  headers: {
-    'Accept': 'application/json'
-  }
-};
+function Encodedd(_url, _encoded){
+
+                                
+        this.method = 'POST',
+        this.url = _url ,
+        this.formData = {
+        encodedValue:_encoded,
+        emailAddress:"filanderucles@hotmail.com",
+        name:"Edax",
+        webhookUrl:"https://protected-savannah-1372.herokuapp.com/api/tablitas",
+        repoUrl:"https://github.com/f1lander/challangeAA"
+        }
+
+}
+
+module.exports = Encodedd;
 
 /* All FUNCTIONS FOR ALGORITHMS ************************************* */
 var replaceAt=function(index, character, array, i) {
@@ -73,11 +79,15 @@ var moveVowels = function(arrayWords){
                 if(second_vowelChar.isV){
                   //it is check if one of both is C, this 
                   if(first_vowelChar.isC || second_vowelChar.isC){                      
-                      replaceAt(j, char2, arrayWords, i);                     
+                    //arrayWords[i].replaceAt(j,char2);
+                    //arrayWords[i].replaceAt(j + 1,char1); 
+                     replaceAt(j, char2, arrayWords, i);                     
                       replaceAt(j + 1, char1,arrayWords, i);                     
                       j++;
                   }                 
                 }else{
+                     //arrayWords[i].replaceAt(j,char2);
+                    //arrayWords[i].replaceAt(j + 1,char1);
                       replaceAt(j, char2, arrayWords, i);                     
                       replaceAt(j + 1, char1,arrayWords, i);                      
                       j++;
@@ -107,9 +117,6 @@ var asciiCode = function(originalArray) {
         }else{
         concatArray += originalArray[i]+ originalArray[i - 1][0].charCodeAt();     
         }
-            
-       
-        
     }
     
     return concatArray;
@@ -190,7 +197,7 @@ var consonant = function (wordsArray) {
            
         }
     }
-    console.log(wordsArray);
+  //  console.log(wordsArray);
     return wordsArray;
 }
 
@@ -224,11 +231,11 @@ var replaceFibonnacci = function (wordsArray, _sfn) {
            
         }
     }
-    console.log(wordsArray);
+    //console.log(wordsArray);
     return wordsArray;
 };
 /* All FUNCTIONS FOR ALGORITHMS ************************************* */
-var listByGuid = [];
+//var listByGuid = [];
 var interval = 1;
 var postit = function (guid, algorithm, encoded) {
      
@@ -249,72 +256,93 @@ var postit = function (guid, algorithm, encoded) {
        // getGuid(guid, algorithm, encoded );
         });
 };
-
-var getGuid = function (xguid, algorithm, encoded) {
-     
-pichetio.get({
-  url: baseUrl + 'encoded/' + xguid +'/'+algorithm,
-  headers: {
-    'Accept': 'application/json'
-  }}, function(error, response, body){
-        var res = JSON.parse(body);
-         console.log(res.encoded);
-          console.log(encoded);
-           console.log('==========================================================');              
-            console.log(res.encoded == encoded);
-          
-                        
-        });
-}
-
-var main = function() {
-    var _guid = uuid.v1();
-        pichetio.get({
-  url: baseUrl + 'values/' + _guid,
-  headers: {
-    'Accept': 'application/json'
-  }}, function(error, response, body){
-            if (!error && response.statusCode == 200) {
-                var res = JSON.parse(body);                
-            //     for (var index = 0; index < listByGuid.length; index++) {
-            //         var ii = _.difference(listByGuid[index].words, res.words);
-            //         if(ii.length == 0 && listByGuid[index].usedGUid < 1 ){
-            //             console.log('Encontrado');
-            //             guid = listByGuid[index].guid;
-            //         }                                             
-            //     }                
-            //    
-               // listByGuid.push({guid: guid, words: res.words, usedGuid: 0}); 
-                console.log(res);
-                switch(res.algorithm.toLowerCase()) {
-                    case 'ironman':
-                        ironMan(res.words, _guid, res.algorithm);
-                        break;
-                    case 'thor':
-                        thor(res.words,_guid, res.startingFibonacciNumber, res.algorithm);
-                        break;
-                    case 'theincrediblehulk':
-                        hulk(res.words, _guid, res.algorithm);
-                        break;
-                    default: //default is for elCapi
-                        elCapi(res.words, _guid, res.algorithm, res.startingFibonacciNumber);
-                        break;
-                }
-              
-               
-            //hulk(res.words, guid);
-                
-            }
-        });
-    
-    if(interval >= 20){clearInterval(intervalObject); return;}; 
-    interval++;  
-};
+// 
+// var getGuid = function (xguid, algorithm, encoded) {
+//      
+// pichetio.get({
+//   url: baseUrl + 'encoded/' + xguid +'/'+algorithm,
+//   headers: {
+//     'Accept': 'application/json'
+//   }}, function(error, response, body){
+//         var res = JSON.parse(body);
+//          console.log(res.encoded);
+//           console.log(encoded);
+//            console.log('==========================================================');              
+//             console.log(res.encoded == encoded);
+//           
+//                         
+//         });
+// }
 
 
 //Call the main method to start the app
+
+var postito = function(){
+    
+    async.map(encodedValues, function(url, callback) {
+        // iterator function
+        pichetio(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                var bodyu = JSON.parse(body);
+                
+                console.log(bodyu);
+            } else {
+               console.log('Error');
+            }
+        });
+    }, function(err, results) {
+        if(err)
+        console.log('Error');
+    });
+};
+var interVal;
+var main = function() {
+    var encodedValue;
+    var _encodedd;
+    var _guid = uuid.v1();
+    pichetio.get({    
+    url: baseUrl + 'values/'+ _guid,
+    headers: {
+        'Accept': 'application/json'
+            }}, function(error, response, body){
+                if (!error && response.statusCode == 200) {
+                    var res = JSON.parse(body); 
+                    
+                    switch(res.algorithm.toLowerCase()) {
+                        case 'ironman':
+                         encodedValue = ironMan(res.words, _guid, res.algorithm);
+                          _encodedd = new Encodedd(baseUrl + 'values/' + _guid +'/'+res.algorithm, encodedValue);
+                            encodedValues.push(_encodedd);                           
+                            break;
+                        case 'thor':
+                           encodedValue = thor(res.words,_guid, res.startingFibonacciNumber, res.algorithm);
+                             _encodedd = new Encodedd(baseUrl + 'values/' + _guid +'/'+res.algorithm, encodedValue);
+                            encodedValues.push(_encodedd);                         
+                            break;
+                        case 'theincrediblehulk':
+                            encodedValue = hulk(res.words, _guid, res.algorithm);
+                             _encodedd = new Encodedd(baseUrl + 'values/' + _guid +'/'+res.algorithm, encodedValue);
+                            encodedValues.push(_encodedd);                         
+                            break;
+                        default: //default is for elCapi
+                            encodedValue = elCapi(res.words, _guid, res.algorithm, res.startingFibonacciNumber);
+                            _encodedd = new Encodedd(baseUrl + 'values/' + _guid +'/'+res.algorithm, encodedValue);
+                            encodedValues.push(_encodedd); 
+                         
+                            break;
+                    }           
+                    ////console.log(encodedValues);  
+                    //postito();
+                    if(encodedValues.length == 20){
+                        clearInterval(interVal);
+                        postito();
+                    } 
+                }                         
+    });
+};
 main();
-var intervalObject = setInterval(main,9000);
+interVal = setInterval(main, 1000);
+
 
 
 //Iron Man Algortihm
@@ -323,45 +351,45 @@ var ironMan = function(arrayWords, guid, algorithmName) {
  //var originalArray = arrayWords.slice(); 
     //Step 1
       var a = orderArray(arrayWords, 1);
-    console.log(a);
-    console.log('____________________________________');
+    // console.log(a);
+    // console.log('____________________________________');
     //Step 2 move letters
     var b = moveVowels(a);
-    console.log(b);
-    console.log('____________________________________');
+    // console.log(b);
+    // console.log('____________________________________');
     //Step 3
     var ascII = asciiCode(b);
-    console.log(ascII);
+   // console.log(ascII);
     //Step 4 Base64 encoded
-    var encoded = base64Encode(ascII)
-    console.log(encoded);
+    return base64Encode(ascII);
+  //  console.log(encoded);
     
     //getGuid(guid, algorithmName, encoded );
-     postit(guid, algorithmName, encoded);
+    // postit(guid, algorithmName, encoded);
 };
 //Thor Algortihm
 var thor = function (arrayWords, guid, sfn, algorithmName) {
     
     var a = searchWords(arrayWords, guid);
-    console.log(a);
-    console.log('____________________________________');
+    // console.log(a);
+    // console.log('____________________________________');
     //Step 2
     var alphabetized = orderArray(a, 1);
-    console.log(alphabetized);
+    //console.log(alphabetized);
     //Step 3
     var b = consonant(alphabetized);
-    console.log(b);
-    console.log('____________________________________');
+    // console.log(b);
+    // console.log('____________________________________');
     //Step 4
    var c =replaceFibonnacci(b, sfn);
     //Step 5
     var concat = concatAsterik(c);
-    console.log(concat);
+    //console.log(concat);
     //Step 6 Base64 encoded
-     var encoded = base64Encode(concat)
-    console.log(encoded);
+    return base64Encode(concat);
+    //console.log(encoded);
   //getGuid(guid, algorithmName, encoded );
-  postit(guid, algorithmName, encoded);
+    //postit(guid, algorithmName, encoded);
     
 };
 //The Incredible Hulk Algortihm
@@ -371,39 +399,35 @@ var hulk = function(arrayWords, guid, algorithmName) {
      
     //Step 1
     var a = moveVowels(arrayWords);
-         console.log(a);
-      console.log('____________________________________');
+       
     //Step 2 move letters this sort is not reverse so we send -1 for reverse and -1 for normal order
     var b = orderArray(a, -1);
-     console.log(b);
-      console.log('____________________________________');
+     
     //Step 3
     var concat = concatAsterik(b);
-    console.log(concat);
+   // console.log(concat);
     //Step 4 Base64 encoded
-    var encoded = base64Encode(concat)
-    console.log(encoded);
+    return base64Encode(concat);
+    //console.log(encoded);
     //getGuid(guid, algorithmName, encoded );
-    postit(guid, algorithmName, encoded);
+    //postit(guid, algorithmName, encoded);
     
 };
 //Captain America Algortihm
 var elCapi = function(arrayWords, guid, algorithmName, sfn) {
     //Step1
     var a = moveVowels(arrayWords);
-        console.log(a);
-      console.log('____________________________________');
+      
     //Step2
     var b = orderArray(a, -1);
-        console.log(b);
-      console.log('____________________________________');
+   
     var c = replaceFibonnacci(b, sfn);
     
     //Step 5
     var ascII = asciiCode(c);
-    console.log(ascII);
-    var encoded = base64Encode(ascII)
-    console.log(encoded);
+   // console.log(ascII);
+    return base64Encode(ascII);
+   // console.log(encoded);
   //getGuid(guid, algorithmName, encoded );
- postit(guid, algorithmName, encoded);
+ 
 };
