@@ -1,5 +1,10 @@
 {
+ 
   "name": "ar-api",
+  "description": "This a AA challenge for the job offer",
+  "scripts": {
+    "start": "node app"
+  },
   "version": "2.0.0",
   "dependencies": {
     "body-parser": "^1.5.1",

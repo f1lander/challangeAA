@@ -23,7 +23,7 @@ class Avengers {
     
     }
     //Thor Algortihm
-    thor() {
+    thor(sfn) {
 
         const a = encFunc.searchWords(this.arrayWords, this.guid);
         //Step 2
