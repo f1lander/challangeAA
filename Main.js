@@ -6,6 +6,7 @@ const pichetio = require("request"),
     baseUrl = 'http://internal-devchallenge-2-dev.apphb.com/',
     Encoded = require('./Encoded'),
     Avengers = require('./Avengers');
+    
 let interVal = 1;
 let encodedValues = [];
 
