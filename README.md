@@ -1,7 +1,6 @@
 # Acklen Avenue Challenge
 
 - git clone [this repo]
-- git checkout refactor
 - npm install
 - npm start
 

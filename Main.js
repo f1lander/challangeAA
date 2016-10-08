@@ -70,8 +70,7 @@ class Main {
                         _encodedd = encFunc.encoded(url, encodedValue);
                         encodedValues.push(_encodedd);
                         break;
-                    default: //default is for elCapi
-
+                    default: 
                         encodedValue = avengers.capitan(res.startingFibonacciNumber);
                         _encodedd = encFunc.encoded(url, encodedValue);
                         encodedValues.push(_encodedd);
